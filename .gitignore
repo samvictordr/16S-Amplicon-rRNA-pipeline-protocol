@@ -1,0 +1,93 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# OS / editor / agent cruft
+.DS_Store
+.claude/
+
+# Local working notes, not part of the release
+paper/turnitin-reports/
+paper/*
+paper/
+
+# Scratch copies of the built manuscript (canonical build is paper/main.pdf)
+main-2.pdf
+
+# FASTQ data (download via stages/01_download.sh)
+*.fastq
+*.fastq.gz
+
+# QIIME 2 artifacts (regenerable via pipeline)
+demux.qza
+denoising-stats.qza
+rep-seqs.qza
+table.qza
+taxonomy.qza
+exported-data/
+
+# The SILVA classifier is a 141 MB binary — fetch it, don't version it.
+# stages/04_classify.sh downloads it from CLASSIFIER_URL on first run.
+*.qza
+
+# Benchmark scratch space
+.bench-scratch/
+.classifier-build/
+
+# Generated at runtime by stages/02_import.sh (contains absolute paths)
+manifest.tsv
+
+# Visualization outputs
+*.html
+krona_input.txt
+
+# LaTeX build artifacts
+paper/main.aux
+paper/main.bbl
+paper/main.blg
+paper/main.log
+paper/main.out
+paper/main.pdf
+paper/main.synctex.gz
+
+# flock lockfiles created by lib/benchmark.sh when appending CSV rows.
+# Regenerable artifacts, never content.
+*.lock
+
+# Benchmark data IS tracked on purpose: the manuscript's Data Availability
+# statement promises it, and Frontiers verifies that claim.
+!benchmarks/*.csv
+!benchmarks/*.json
+!benchmarks/*.tsv
+
+# paper/figures/ is the SUPERSEDED figure directory and is deliberately NOT
+# tracked. It holds two kinds of stale output, both of which would mislead a
+# reader who found them in the repository:
+#   - the simulation-era HPC figures (amdahl_decomposition, strong_scaling_*,
+#     waste_comparison, prediction_accuracy, ...), which are contradicted by the
+#     measurements in benchmarks/
+#   - taxonomic and diversity figures generated before the classifier region was
+#     corrected, i.e. against the 341F/805R (V3-V4) reference
+# The manuscript's figures live in paper/frontiers/figures/ and are regenerated
+# by paper/analysis/generate_figures.py. Files are kept on disk, just untracked.
+paper/figures/
+
+# LaTeX build artifacts for the Frontiers manuscript
+paper/frontiers/*.aux
+paper/frontiers/*.bbl
+paper/frontiers/*.blg
+paper/frontiers/*.log
+paper/frontiers/*.out
+paper/frontiers/*.fls
+paper/frontiers/*.fdb_latexmk
+paper/frontiers/*.synctex.gz
+paper/frontiers/*.fdb_latexmk
+paper/frontiers/*.fls
+
+# Biology outputs are tracked (they become manuscript results); scratch is not
+!biology/*.tsv
+
+# Superseded manuscript and its build artifacts. See archive/README.md.
+archive/

@@ -1,0 +1,83 @@
+# datasets.tsv — 16S V4 runs for the depth-invariance study
+#
+# Columns (tab-separated):  accession  label  biome  trunc_f  trunc_r
+#
+# ==============================================================================
+# CLAIM UNDER TEST
+# ==============================================================================
+# Denoising cost scales with SEQUENCING DEPTH. Classification cost scales with
+# COMMUNITY RICHNESS (ASV count), which saturates with depth. The two stages
+# therefore need independently sized allocations, and sizing a classification
+# job by read count -- current practice everywhere, including this repository's
+# own SLURM templates before this study -- measures the wrong quantity.
+#
+# The controlled pair that tests this directly:
+#
+#   ERR3444605  naso-D003-ANS      66,993 reads -> 54 ASVs
+#   ERR3444628  naso-D006-deep  1,804,054 reads -> 58 ASVs
+#
+# Same study, same body site, same protocol. 27x the sequencing depth yields 7%
+# more ASVs. If classification cost tracked reads these two would differ 27-fold;
+# if it tracks ASVs, they cost the same.
+#
+# The remaining rows give a modest richness spread (5-70 ASVs) at comparable
+# depth, used for the cost-vs-ASV-count curve.
+#
+# ==============================================================================
+# COMPOSITION — single study, single protocol
+# ==============================================================================
+# Every run is from ENA study PRJEB33591 / ERP116397, "Outer Ear and Nasopharynx
+# as Sources of the Middle Ear Microbiome during Otitis Media with Effusion":
+# Illumina MiSeq, PAIRED, 2x251 bp, 16S rRNA V4, Caporaso 515F/806R, submitted
+# already primer-trimmed (measured median ASV length 253 bp).
+#
+# Drawing every sample from one study removes batch effects, extraction-protocol
+# differences and primer-variant differences as confounders. Since the dependent
+# variable here IS ASV count, anything that perturbs ASV inference for technical
+# reasons contaminates the result directly.
+#
+# ==============================================================================
+
+# --- Middle ear / ear canal: lowest richness -------------------------------
+ERR3444606	ear-D003-ELS	middle-ear	240	240
+ERR3444623	ear-D005-MLA	middle-ear	240	240
+ERR3444633	ear-D006-MRA	middle-ear	240	240
+
+# --- Nasopharynx ------------------------------------------------------------
+ERR3444605	naso-D003-ANS	nasopharynx	240	240
+ERR3444642	naso-D008-ANS	nasopharynx	240	240
+ERR3444597	naso-D002-ANS	nasopharynx	240	240
+
+# --- Adenoid: highest richness in this set ---------------------------------
+ERR3444641	aden-D008-AdS	adenoid	240	240
+ERR3444680	aden-D014-AdS	adenoid	240	240
+
+# --- Depth axis: same body site, ~27x the reads ----------------------------
+ERR3444628	naso-D006-deep	nasopharynx-deep	240	240
+
+# ==============================================================================
+# EXCLUDED — and why
+# ==============================================================================
+# PRJDB3924 (DRR045560, DRR045575, DRR045578, DRR045563), rhizosphere soil.
+# Downloaded and denoised; excluded after inspection, for two reasons.
+#
+# 1. Reads retain their PCR primers. Measured median merged ASV length was
+#    292 bp = 253 (V4) + 19 (515F) + 20 (806R), and the ASV sequences begin
+#    GTGCCAGCCGCCGCGGTAA / GTGCCAGCAGCCGCGGTAA -- both variants of the
+#    degenerate M position in 515F. Variation at primer positions reflects the
+#    primer pool, not the template, so DADA2 splits one organism across several
+#    ASVs. That inflates exactly the quantity this study measures.
+#
+# 2. They were included to supply high richness and did not. At 54-60k reads
+#    they yielded 90-105 ASVs, level with the adenoid samples above. Rhizosphere
+#    soil would normally give 10^2-10^3. Whatever the cause, they add a second
+#    study's batch effects without extending the richness range.
+#
+# PRJDB3826 ("validation of preparation for ampricon sequencing by MiSeq about
+# soil samples") has an EMPTY library_construction_protocol field, so its primer
+# region is undocumented. Never use undocumented runs here: a region mismatch is
+# invisible except as quietly degraded classification.
+#
+# If a genuinely high-richness V4 arm is added later, verify BOTH that the
+# protocol field names 515F/806R AND that the measured median ASV length is
+# ~253 bp, not ~292 bp.
