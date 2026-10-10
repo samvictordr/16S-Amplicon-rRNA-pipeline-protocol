@@ -91,3 +91,6 @@ paper/frontiers/*.fls
 
 # Superseded manuscript and its build artifacts. See archive/README.md.
 archive/
+
+# The manuscript is tracked in the private repository, never here.
+paper/
