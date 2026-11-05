@@ -1,0 +1,37 @@
+# qiime2-lean.yml -- INSTALLATION RECIPE for the minimal classification environment
+#
+# Unlike ../environment.yml, which is a `conda env export` provenance record
+# carrying linux-64 build hashes, this file is meant to be installed from:
+#
+#   conda env create -f environments/qiime2-lean.yml
+#
+# It reproduces the environment measured in Section 4.6 of the manuscript: the
+# QIIME 2 framework, the CLI and q2-feature-classifier, with no other plugin
+# requested. Dependency resolution adds q2-feature-table, q2-quality-control
+# and q2-taxa, giving 5 plugins in total against 27 in the full distribution.
+#
+# This environment can run `qiime feature-classifier classify-sklearn` and
+# nothing else. It CANNOT denoise: q2-dada2 is deliberately absent. Use it as a
+# second environment for the classification step only, alongside the full
+# distribution for the rest of the workflow.
+#
+# Measured effect (Table 6): classification 33.24 s -> 18.75 s (-43.6%), peak
+# RSS 3.10 GiB -> 2.22 GiB (-28.3%), taxonomy table byte-identical
+# (SHA-256 95875c93ee05a864...).
+#
+# The scikit-learn pin is load-bearing. A Naive Bayes classifier artifact
+# serialised under a different scikit-learn is refused at load time, so this
+# version must match the one the classifier was trained under.
+name: qiime2-lean-2026.7
+channels:
+  - https://packages.qiime2.org/qiime2/2026.7/qiime2/released
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.12.13
+  - qiime2=2026.7.0
+  - q2cli=2026.7.0
+  - q2-types=2026.7.0
+  - q2-feature-classifier=2026.7.0
+  - scikit-learn=1.7.1
+  - bibtexparser=1.4.4

@@ -1,0 +1,38 @@
+# qiime2-lean.def -- Apptainer/Singularity definition for the minimal
+# classification environment of Section 4.6.
+#
+#   apptainer build qiime2-lean.sif environments/qiime2-lean.def
+#   apptainer exec --bind "$PWD":/data qiime2-lean.sif \
+#       qiime feature-classifier classify-sklearn \
+#         --i-classifier /data/classifier.qza \
+#         --i-reads /data/rep-seqs.qza \
+#         --o-classification /data/taxonomy.qza
+#
+# Built for HPC sites where Docker is unavailable. The image cannot denoise:
+# q2-dada2 is deliberately absent.
+Bootstrap: docker
+From: condaforge/miniforge3:25.9.1-0
+
+%files
+    environments/qiime2-lean.yml /tmp/qiime2-lean.yml
+
+%post
+    conda env create -y -f /tmp/qiime2-lean.yml
+    conda clean -afy
+    rm /tmp/qiime2-lean.yml
+
+%environment
+    export PATH=/opt/conda/envs/qiime2-lean-2026.7/bin:$PATH
+    export MPLBACKEND=Agg
+    export OMP_NUM_THREADS=1
+    export OPENBLAS_NUM_THREADS=1
+    export MKL_NUM_THREADS=1
+
+%labels
+    Name qiime2-lean
+    Version 2026.7
+    Description Minimal QIIME 2 environment for classify-sklearn
+
+%help
+    Minimal QIIME 2 2026.7 environment holding 5 plugins rather than 27.
+    Runs 'qiime feature-classifier classify-sklearn' only.
