@@ -3,7 +3,7 @@
 Code, data and instructions accompanying the manuscript *"Taxonomic
 classification cost is invariant to sequencing depth: measured resource scaling
 of a QIIME 2 amplicon pipeline"* (submitted to *Frontiers in Microbiology*,
-Systems Microbiology).
+Microbiome Data Science).
 
 Measured benchmark data can be found here: [`benchmarks/`](benchmarks/) 
 
